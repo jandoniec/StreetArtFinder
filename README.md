@@ -1,4 +1,4 @@
-#StreetArtFinder
+# StreetArtFinder
 
-##Prototype
+## Prototype
 - https://marvelapp.com/prototype/1bj0ef94
