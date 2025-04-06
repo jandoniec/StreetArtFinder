@@ -14,8 +14,8 @@ const firebaseConfig = {
   appId: "1:132902104132:web:269364284173ec262f6011",
   // Add the redirect URIs for Google and Facebook
   redirectUris: {
-    google: "https://yourdomain.com/auth/google/callback",
-    facebook: "https://yourdomain.com/auth/facebook/callback"
+    google: "https://localhost:3000/auth/google/callback",
+    facebook: "https://localhost:3000/auth/facebook/callback"
   }
 };
 
