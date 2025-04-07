@@ -1,4 +1,9 @@
 
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -8,7 +13,13 @@ import Toolbar from '@mui/material/Toolbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardContent, Typography } from '@mui/material'; // Dodano komponenty MUI do stylizacji
-
+// FIX: problem z domyślną ikoną
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 const UserPage = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -38,8 +49,10 @@ const UserPage = () => {
   };
 
   const handleAdd = () => {
-    console.log('Add new art');
+    navigate('/add-art');
   };
+  
+  
 
   if (!user) {
     return <div className="p-4">Loading user data...</div>;
