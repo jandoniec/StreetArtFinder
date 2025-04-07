@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -13,14 +13,16 @@ const firebaseConfig = {
   messagingSenderId: "132902104132",
   appId: "1:132902104132:web:269364284173ec262f6011",
   // Add the redirect URIs for Google and Facebook
-  redirectUris: {
-    google: "https://localhost:3000/auth/google/callback",
-    facebook: "https://localhost:3000/auth/facebook/callback"
-  }
+  // redirectUris: {
+  //   google: "https://localhost:3000/auth/google/callback",
+  //   facebook: "https://streetartfinder-7d4df.firebaseapp.com/__/auth/handler"
+  // }
 };
 
-// Initialize Firebase
+// initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// const googleProvider = new GoogleAuthProvider();
+// const facebookProvider = new FacebookAuthProvider();
 
 export { auth };

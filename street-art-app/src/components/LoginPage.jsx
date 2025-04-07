@@ -1,3 +1,4 @@
+import { GoogleLogin } from '@react-oauth/google';
 import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { auth } from '../firebase';
@@ -15,6 +16,11 @@ const LoginPage = () => {
     } catch (error) {
       alert('Error logging in: ' + error.message);
     }
+  };
+
+  const handleGoogleLogin = (response) => {
+    console.log(response);
+    // Handle Google login response
   };
 
   return (
@@ -45,6 +51,7 @@ const LoginPage = () => {
           Login
         </Button>
       </form>
+      <GoogleLogin onSuccess={handleGoogleLogin} onError={() => console.log('Login Failed')} />
     </Box>
   );
 };
