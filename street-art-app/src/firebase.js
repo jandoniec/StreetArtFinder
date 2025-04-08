@@ -8,7 +8,7 @@ import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDKKWdIMra1VxSDUOtojk75VQ_LFgvG0",
+  apiKey: "AIzaSyDKKWdIMra1VxSDUOtojk75VQ_LFgvG0m8",
   authDomain: "streetartfinder-7d4df.firebaseapp.com",
   projectId: "streetartfinder-7d4df",
   storageBucket: "streetartfinder-7d4df.firebasestorage.app",
@@ -22,4 +22,4 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export { app, auth };
+export { app, auth, firestore, storage };
