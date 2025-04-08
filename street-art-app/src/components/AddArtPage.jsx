@@ -13,7 +13,8 @@ import {
   Checkbox,
   FormControlLabel,
   Container,
-  Box
+  Box,
+  Typography
 } from '@mui/material';
 import { storage, firestore } from '../firebase';
 import {
@@ -42,6 +43,7 @@ const AddArtPage = () => {
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [useGeolocation, setUseGeolocation] = useState(true);
+  const [useCamera, setUseCamera] = useState(true);
 
   useEffect(() => {
     if (useGeolocation) {
@@ -78,6 +80,8 @@ const AddArtPage = () => {
       });
 
       alert('Art added!');
+      setTitle('');
+      setImage(null);
     } catch (error) {
       console.error(error);
       alert('Error submitting art: ' + error.message);
@@ -119,6 +123,16 @@ const AddArtPage = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={useCamera}
+              onChange={(e) => setUseCamera(e.target.checked)}
+            />
+          }
+          label="Use camera to take photo"
+        />
+
         <Button
           variant="outlined"
           component="label"
@@ -130,10 +144,24 @@ const AddArtPage = () => {
             hidden
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handleImageChange}
+            {...(useCamera ? { capture: "environment" } : {})}
           />
         </Button>
+
+        {image && (
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2">Selected: {image.name}</Typography>
+            <Button
+              variant="text"
+              color="error"
+              size="small"
+              onClick={() => setImage(null)}
+            >
+              Remove image
+            </Button>
+          </Box>
+        )}
 
         <FormControlLabel
           control={
