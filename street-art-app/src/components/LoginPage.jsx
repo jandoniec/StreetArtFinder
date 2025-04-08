@@ -1,54 +1,60 @@
 import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth, firestore } from '../firebase';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc } from "firebase/firestore"; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log(user)
+  
+      // Fetch user data from Firestore
+      const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+      if (userDoc.exists()) {
+        navigate('/');
+      } else {
+        console.log('No such document!'); // Debugging line
+      }
+  
       alert('Login successful!');
     } catch (error) {
       alert('Error logging in: ' + error.message);
     }
   };
+  
+  
+  
 
   const handleGoogleLogin = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
-      console.log(result)
-    })
+      const user = result.user;
+
+      // Store user data in Firestore
+      await setDoc(doc(firestore, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid
+      });
+
+      // Redirect to home page with user's name
+      navigate('/');
+    }).catch((error) => {
+      console.error("Error during Google login:", error);
+    });
   };
 
-  const handleFacebookLogin = async () => {
-    try {
-      const provider = new FacebookAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      // The signed-in user info.
-      const user = result.user;
-      // This gives you a Facebook Access Token. You can use it to access the Facebook Graph API.
-      const credential = FacebookAuthProvider.credentialFromResult(result);
-      const accessToken = credential?.accessToken;
-
-      console.log('Facebook Login Successful:', user);
-      alert('Facebook Login successful!');
-      // You can now handle the user object (e.g., update your app's state, redirect, etc.)
-    } catch (error) {
-      console.error('Error logging in with Facebook:', error);
-      alert('Error logging in with Facebook: ' + error.message);
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData?.email;
-      // The AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
-      // ...
-    }
+  const handleRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -79,9 +85,9 @@ const LoginPage = () => {
           Login
         </Button>
       </form>
-      <Button variant="contained" color="info" onClick={handleGoogleLogin} fullWidth>Login with Google</Button>
-      <Button variant="contained" color="info" onClick={handleFacebookLogin} fullWidth>
-        Login with Facebook
+      <Button variant="contained" color="info" onClick={handleGoogleLogin}>Login with Google</Button>
+      <Button variant="outlined" color="secondary" onClick={handleRegister} fullWidth sx={{ mt: 2 }}>
+        Register
       </Button>
     </Box>
   );
