@@ -14,17 +14,12 @@ const firebaseConfig = {
   storageBucket: "streetartfinder-7d4df.firebasestorage.app",
   messagingSenderId: "132902104132",
   appId: "1:132902104132:web:269364284173ec262f6011",
-  // Add the redirect URIs for Google and Facebook
-  redirectUris: {
-    google: "https://localhost:3000/auth/google/callback",
-    facebook: "https://localhost:3000/auth/facebook/callback"
-  }
 };
 
-// Initialize Firebase
+// initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, firestore, storage };
+export { app, auth };
