@@ -1,12 +1,14 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDKKWdIMra1VxSDUOtojk75VQ_LFgvG0m8",
+  apiKey: "AIzaSyDKKWdIMra1VxSDUOtojk75VQ_LFgvG0",
   authDomain: "streetartfinder-7d4df.firebaseapp.com",
   projectId: "streetartfinder-7d4df",
   storageBucket: "streetartfinder-7d4df.firebasestorage.app",
@@ -17,5 +19,7 @@ const firebaseConfig = {
 // initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const firestore = getFirestore(app);
+const storage = getStorage(app);
 
 export { app, auth };
