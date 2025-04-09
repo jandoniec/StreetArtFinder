@@ -9,8 +9,8 @@ import Toolbar from '@mui/material/Toolbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardContent, Typography, CardMedia } from '@mui/material';
-import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '../firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { firestore, auth } from '../firebase';
 
 // FIX: domyślna ikona Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -21,11 +21,22 @@ L.Icon.Default.mergeOptions({
 });
 
 const UserPage = () => {
-  const [user, setUser] = useState({ userName: 'testowy user' });
+  const [user, setUser] = useState({ userName: '' });
   const [arts, setArts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const currentUser = auth.currentUser;
+      console.log(currentUser.name)
+      if (currentUser) {
+        const userDoc = await getDoc(doc(firestore, 'users', currentUser.uid));
+        if (userDoc.exists()) {
+          setUser({ userName: userDoc.data().name });
+        }
+      }
+    };
+
     const fetchArts = async () => {
       try {
         const snapshot = await getDocs(collection(firestore, 'arts'));
@@ -39,6 +50,7 @@ const UserPage = () => {
       }
     };
 
+    fetchUserData();
     fetchArts();
   }, []);
 
@@ -65,7 +77,7 @@ const UserPage = () => {
 
       <div className="container bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen text-white">
         <div className="max-w-4xl mx-auto p-6">
-          <h1 className="text-3xl font-semibold tracking-wide mb-4">Hello, {user.userName}</h1>
+          <h1 className="text-3xl font-semibold tracking-wide mb-4">Hello, {user.userName || 'Loading...'}</h1>
           <h2 className="text-2xl font-semibold mb-6">Your Arts</h2>
 
           {arts.length === 0 ? (
