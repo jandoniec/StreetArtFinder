@@ -82,14 +82,20 @@ const UserPage = () => {
   }
   const deleteArt = async (artId) => {
     try {
-      const artRef = doc(firestore, "arts", artId); // Zastąp "arts" nazwą swojej kolekcji
+      const artRef = doc(firestore, "arts", artId);
       await deleteDoc(artRef);
+      setUserArts((prevArts) => prevArts.filter((art) => art.id !== artId));
+
+
       alert('Document successfully deleted!');
     } catch (error) {
       console.error('Error deleting document:', error);
       alert('Error deleting document: ' + error.message);
     }
   };
+  // useEffect(()=>{
+  //   console.log(arts)
+  // },[arts])
   
 
 return (
@@ -139,10 +145,11 @@ return (
                   />
                 )}
                 <CardContent sx={{ padding: '16px' }}>
-                  <Typography variant="h6">{art.title}</Typography>
+                  <Typography variant="h6" color="primary">{art.title}</Typography>
                 </CardContent>
-                <Button variant="contained" sx={{margin:'20px'}} size="large" color="primary" onClick={deleteArt(art.id)}>
-            Delete art
+                <Button variant="contained" sx={{margin:'20px'}} size="large" color="primary" onClick={(e) => {e.stopPropagation();
+                deleteArt(art.id);}}>
+                Delete art
           </Button>
               </Card>
             ))}

@@ -84,7 +84,7 @@ const AddArtPage = () => {
     if (navigator.vibrate) {
         navigator.vibrate([200,100,200,100,200,500,200,500,200,100,200,100,200]);
     }
-    alert("SOS aktywowane!");
+
 }
 
   const handleImageChange = (e) => {
