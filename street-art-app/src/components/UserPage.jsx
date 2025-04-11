@@ -5,7 +5,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box,Card, CardContent, Typography, CardMedia } from '@mui/material';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc,deleteDoc, getDoc } from 'firebase/firestore';
 import { firestore, auth } from '../firebase';
 import AppBarComponent from './AppBar';
 delete L.Icon.Default.prototype._getIconUrl;
@@ -80,6 +80,17 @@ const UserPage = () => {
   const handleSeeAll=()=>{
     navigate('/arts')
   }
+  const deleteArt = async (artId) => {
+    try {
+      const artRef = doc(firestore, "arts", artId); // Zastąp "arts" nazwą swojej kolekcji
+      await deleteDoc(artRef);
+      alert('Document successfully deleted!');
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert('Error deleting document: ' + error.message);
+    }
+  };
+  
 
 return (
   <div>
@@ -130,6 +141,9 @@ return (
                 <CardContent sx={{ padding: '16px' }}>
                   <Typography variant="h6">{art.title}</Typography>
                 </CardContent>
+                <Button variant="contained" sx={{margin:'20px'}} size="large" color="primary" onClick={deleteArt(art.id)}>
+            Delete art
+          </Button>
               </Card>
             ))}
           </Box>
