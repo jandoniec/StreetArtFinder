@@ -80,6 +80,12 @@ const AddArtPage = () => {
   useEffect(()=>{
     console.log(tags)
   },[tags])
+  const triggerSOS=()=> {
+    if (navigator.vibrate) {
+        navigator.vibrate([200,100,200,100,200,500,200,500,200,100,200,100,200]);
+    }
+    alert("SOS aktywowane!");
+}
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -128,6 +134,7 @@ const AddArtPage = () => {
       }
 
       alert('Art added!');
+      triggerSOS()
       setTitle('');
       setImage(null);
       setTags([]);
