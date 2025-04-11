@@ -4,7 +4,7 @@ import { auth, firestore } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-
+import {Link} from '@mui/material';
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +34,7 @@ const RegisterPage = () => {
       <AppBar position="static">
         <Toolbar>
          
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+            <Typography variant="h5" component="div" sx={{ textAlign: 'center', flexGrow: 1 }}>
               StreetArtFinder
             </Typography>
             </Toolbar>
@@ -51,7 +51,7 @@ const RegisterPage = () => {
         padding: 2 
       }}
     >
-      <Typography variant="h4" component="p" gutterBottom>
+      <Typography variant="h4" component="p" color='primary' gutterBottom>
         Register
       </Typography>
       <form onSubmit={handleRegister} style={{ width: '100%', maxWidth: 360 }}>
@@ -70,6 +70,8 @@ const RegisterPage = () => {
         <Button variant="contained" color="primary" type="submit" fullWidth>
           Register
         </Button>
+        <Typography color='primary' sx={{textAlign:'center',paddingTop:'15px'}}>Already have an account?</Typography>
+        <Link href='/StreetArtFinder' sx={{display: 'flex', paddingTop:'15px',justifyContent: 'center'}}>Click here to sign in!</Link>
       </form>
     </Box>
     </div>

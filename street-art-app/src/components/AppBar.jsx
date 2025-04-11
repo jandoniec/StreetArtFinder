@@ -1,6 +1,10 @@
-import { AppBar,Toolbar, Button,  Typography } from '@mui/material';
-import React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
+import React from 'react';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 
 const AppBarComponent=()=>{
@@ -14,10 +18,15 @@ const AppBarComponent=()=>{
         <AppBar position="static">
           <Toolbar>
           
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
               StreetArtFinder
             </Typography>
-            <Button onClick={handleLogout} sx={{fontSize:25}} color="inherit">Logout</Button>
+            
+            <IconButton color="inherit" onClick={handleLogout}>
+            <LogoutIcon />
+          </IconButton>
+            
+            {/* <Button onClick={handleLogout} sx={{fontSize:25}} color="inherit">Logout</Button> */}
           </Toolbar>
         </AppBar>
     )

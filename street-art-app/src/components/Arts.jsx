@@ -96,86 +96,90 @@ const Arts = () => {
 
   return (
     <div>
-      <AppBarComponent/>
+      <AppBarComponent />
       <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h3"  color='primary' paddingBottom='20px'>
-          All Street Arts
-        </Typography>
-
-        <Box sx={{ mb: 4, width: 150 }}>
-          <FormControl fullWidth>
-            <InputLabel>Tags</InputLabel>
-            <Select
-              multiple
-              value={selectedTags}
-              onChange={handleTagChange}
-              renderValue={(selected) => selected.map(id => availableTags.find(tag => tag.id === id)?.name).join(', ')}
-              label="Tags"
-            >
-              {availableTags.map((tag) => (
-                <MenuItem key={tag.id} value={tag.id}>
-                  <Checkbox checked={selectedTags.indexOf(tag.id) > -1} />
-                  {tag.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-
         {filterArtsByTags().length === 0 ? (
-          <Typography color ='primary' variant="h3">No arts found.</Typography>
+          <Typography color="primary" variant="h3">No arts found.</Typography>
         ) : (
-          <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-            gap: 2,
-            justifyItems: 'center',
-            marginTop: 3,
-            '@media(min-width: 1024px)': {
-              gridTemplateColumns: 'repeat(auto-fill, minmax(900px, 1fr))', 
-            },
-          }}>
-            {filterArtsByTags().map((art) => (
-              <Card
-                key={art.id}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  cursor: 'pointer',
-                  width: '100%',
-                  maxWidth: 700, 
-                  '&:hover': { boxShadow: 8 },
-                  borderRadius: '8px',
-                  boxShadow: 3
-                }}
-                onClick={() => handleCardClick(art.id)}
-              >
-                {art.imageUrl && (
-                  <CardMedia
-                    component="img"
-                    height="400"
-                    image={art.imageUrl}
-                    alt={art.title}
-                    sx={{ objectFit: 'cover' }}
-                  />
-                )}
-                <CardContent sx={{ padding: '16px' }}>
-                  <Typography variant="h6">{art.title}</Typography>
-                  {art.userId && users[art.userId] ? (
-                    <Typography variant="body2" color="textSecondary">
-                      Added by: {users[art.userId]}
-                    </Typography>
-                  ) : (
-                    <Typography variant="body2" color="textSecondary">
-                      User not found
-                    </Typography>
+          <>
+            <Typography variant="h3" color="primary" paddingBottom="20px">
+              All Street Arts
+            </Typography>
+  
+            <Box sx={{ mb: 4, width: 150 }}>
+              <FormControl fullWidth>
+                <InputLabel>Tags</InputLabel>
+                <Select
+                  multiple
+                  value={selectedTags}
+                  onChange={handleTagChange}
+                  renderValue={(selected) =>
+                    selected.map(id => availableTags.find(tag => tag.id === id)?.name).join(', ')
+                  }
+                  label="Tags"
+                >
+                  {availableTags.map((tag) => (
+                    <MenuItem key={tag.id} value={tag.id}>
+                      <Checkbox checked={selectedTags.indexOf(tag.id) > -1} />
+                      {tag.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+  
+            <Box sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+              gap: 2,
+              justifyItems: 'center',
+              marginTop: 3,
+              '@media(min-width: 1024px)': {
+                gridTemplateColumns: 'repeat(auto-fill, minmax(900px, 1fr))',
+              },
+            }}>
+              {filterArtsByTags().map((art) => (
+                <Card
+                  key={art.id}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'pointer',
+                    width: '100%',
+                    maxWidth: 700,
+                    '&:hover': { boxShadow: 8 },
+                    borderRadius: '8px',
+                    boxShadow: 3
+                  }}
+                  onClick={() => handleCardClick(art.id)}
+                >
+                  {art.imageUrl && (
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      image={art.imageUrl}
+                      alt={art.title}
+                      sx={{ objectFit: 'cover' }}
+                    />
                   )}
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
+                  <CardContent sx={{ padding: '16px' }}>
+                    <Typography variant="h6" color='primary'>{art.title}</Typography>
+                    {art.userId && users[art.userId] ? (
+                      <Typography variant="body2" color="primary">
+                        Added by: {users[art.userId]}
+                      </Typography>
+                    ) : (
+                      <Typography variant="body2" color="textSecondary">
+                        User not found
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </>
         )}
-
+  
         <Button
           variant="contained"
           color="primary"
@@ -187,6 +191,7 @@ const Arts = () => {
       </Box>
     </div>
   );
+  
   
   
 };
