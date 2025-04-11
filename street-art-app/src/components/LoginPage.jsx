@@ -42,7 +42,7 @@ const LoginPage = () => {
         name: user.displayName,
         email: user.email,
         uid: user.uid
-      });
+      }, { merge: true });
 
       navigate('/userpage');
     }).catch((error) => {
