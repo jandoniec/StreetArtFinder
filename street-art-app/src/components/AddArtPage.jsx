@@ -22,15 +22,19 @@ import {
   uploadBytes,
   getDownloadURL
 } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
 import {
   collection,
-  addDoc
+  addDoc,
+  getDocs,
+  doc,updateDoc,getDoc
 } from 'firebase/firestore';
+import {  auth } from '../firebase';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
+import AppBarComponent from './AppBar';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -38,21 +42,44 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
+
 const AddArtPage = () => {
   const [position, setPosition] = useState(null);
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [useGeolocation, setUseGeolocation] = useState(true);
   const [useCamera, setUseCamera] = useState(true);
-
+  const [tags,setTags]=useState([])
+  const [availableTags,setAvailableTags]=useState([])
+  const navigate=useNavigate()
+  
   useEffect(() => {
-    if (useGeolocation) {
+    if (useGeolocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setPosition([pos.coords.latitude, pos.coords.longitude]),
         (err) => console.error('Geolocation error:', err)
       );
     }
   }, [useGeolocation]);
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(firestore, 'tags'));
+        const tagsArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          name: doc.data().name
+        }));
+        setAvailableTags(tagsArray);
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
+  
+    fetchTags();
+  }, []);
+  useEffect(()=>{
+    console.log(tags)
+  },[tags])
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -64,30 +91,61 @@ const AddArtPage = () => {
       return;
     }
 
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      alert('You must be logged in to add art.');
+      return;
+    }
+
     try {
       const imageRef = ref(storage, `arts/${Date.now()}_${image.name}`);
       await uploadBytes(imageRef, image);
       const url = await getDownloadURL(imageRef);
 
-      await addDoc(collection(firestore, 'arts'), {
+      const artRef = await addDoc(collection(firestore, 'arts'), {
         title,
         imageUrl: url,
         location: {
           lat: position[0],
           lng: position[1]
         },
-        createdAt: new Date()
+        tags: tags,
+        createdAt: new Date(),
+        userId: currentUser.uid, 
       });
+
+  
+      const userRef = doc(firestore, 'users', currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const userArts = userData.arts || [];
+        userArts.push(artRef.id);
+
+        await updateDoc(userRef, { arts: userArts });
+      }
 
       alert('Art added!');
       setTitle('');
       setImage(null);
+      setTags([]);
+      navigate('/userpage')
     } catch (error) {
-      console.error(error);
+      console.error('Error submitting art:', error);
       alert('Error submitting art: ' + error.message);
     }
   };
-
+  const handleTagChange = (event) => {
+    const value = event.target.value;
+    setTags((prevTags) =>
+      prevTags.includes(value)
+        ? prevTags.filter((tag) => tag !== value)
+        : [...prevTags, value]
+    );
+  };
+  
   function LocationMarker() {
     useMapEvents({
       click(e) {
@@ -111,9 +169,12 @@ const AddArtPage = () => {
   }
 
   return (
+    <div>
+      <AppBarComponent/>
+   
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Box sx={{ maxWidth: 600, mx: 'auto', px: 2 }}>
-        <h1 className="text-2xl font-bold mb-4">Add New Street Art</h1>
+        <Typography variant='h3' color='primary' fontStyle='bold' textAlign={'center'}>Add New Street Art</Typography>
 
         <TextField
           label="Title"
@@ -162,6 +223,23 @@ const AddArtPage = () => {
             </Button>
           </Box>
         )}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Select Tags</Typography>
+          {availableTags.map((tag) => (
+            <FormControlLabel
+              key={tag.id}
+              control={
+                <Checkbox
+                  value={tag.id}
+                  checked={tags.includes(tag.id)}
+                  onChange={handleTagChange}
+                />
+              }
+              label={tag.name}
+            />
+          ))}
+        </Box>
+
 
         <FormControlLabel
           control={
@@ -190,6 +268,7 @@ const AddArtPage = () => {
         </Button>
       </Box>
     </Container>
+    </div>
   );
 };
 

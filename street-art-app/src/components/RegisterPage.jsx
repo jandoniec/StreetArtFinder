@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
+import { FormControl, InputLabel, Input, Button, Box, Typography, AppBar, Toolbar } from '@mui/material';
 import React, { useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -22,14 +22,24 @@ const RegisterPage = () => {
         uid: user.uid
       });
       alert('Registration successful!');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       alert('Error registering: ' + error.message);
-      navigate('/login');
+      navigate('/');
     }
   };
 
   return (
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+         
+            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+              StreetArtFinder
+            </Typography>
+            </Toolbar>
+            
+        </AppBar>
     <Box 
       className='registerForm' 
       sx={{ 
@@ -62,6 +72,7 @@ const RegisterPage = () => {
         </Button>
       </form>
     </Box>
+    </div>
   );
 };
 
