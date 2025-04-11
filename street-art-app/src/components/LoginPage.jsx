@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
+import { FormControl, InputLabel, Input, Button, Box, Typography, Toolbar, AppBar } from '@mui/material';
 import React, { useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -20,7 +20,7 @@ const LoginPage = () => {
       // Fetch user data from Firestore
       const userDoc = await getDoc(doc(firestore, 'users', user.uid));
       if (userDoc.exists()) {
-        navigate('/');
+        navigate('/userpage');
       } else {
         console.log('No such document!'); // Debugging line
       }
@@ -58,6 +58,14 @@ const LoginPage = () => {
   };
 
   return (
+    <div>
+      <AppBar position="static">
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <Typography variant="h4" component="div" sx={{ textAlign: 'center', flexGrow: 1 }}>
+            StreetArtFinder
+          </Typography>
+        </Toolbar>
+      </AppBar>
     <Box
       className='loginForm'
       sx={{
@@ -81,15 +89,16 @@ const LoginPage = () => {
           <InputLabel htmlFor="password">Password</InputLabel>
           <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </FormControl>
-        <Button variant="contained" color="primary" type="submit" fullWidth>
+        <Button variant="contained" color="primary" type="submit" fullWidth >
           Login
         </Button>
       </form>
-      <Button variant="contained" color="info" onClick={handleGoogleLogin}>Login with Google</Button>
-      <Button variant="outlined" color="secondary" onClick={handleRegister} fullWidth sx={{ mt: 2 }}>
+      <Button variant="contained" sx={{width:'360px' ,marginBottom:"20px"}} color="primary" type="submit" onClick={handleGoogleLogin}>Login with Google</Button>
+      <Button variant="contained" sx={{width:'360px' ,marginBottom:"20px"}} color="primary" type="submit"  onClick={handleRegister} >
         Register
       </Button>
     </Box>
+    </div>
   );
 };
 
