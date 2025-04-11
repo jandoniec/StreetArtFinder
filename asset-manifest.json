@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/StreetArtFinder/static/css/main.893d154e.css",
-    "main.js": "/StreetArtFinder/static/js/main.0e03ad14.js",
-    "static/js/453.bacf82f7.chunk.js": "/StreetArtFinder/static/js/453.bacf82f7.chunk.js",
-    "index.html": "/StreetArtFinder/index.html",
-    "main.893d154e.css.map": "/StreetArtFinder/static/css/main.893d154e.css.map",
-    "main.0e03ad14.js.map": "/StreetArtFinder/static/js/main.0e03ad14.js.map",
-    "453.bacf82f7.chunk.js.map": "/StreetArtFinder/static/js/453.bacf82f7.chunk.js.map"
+    "main.css": "/StreetArtFinder/street-art-app/static/css/main.893d154e.css",
+    "main.js": "/StreetArtFinder/street-art-app/static/js/main.4b4a1857.js",
+    "static/js/453.bacf82f7.chunk.js": "/StreetArtFinder/street-art-app/static/js/453.bacf82f7.chunk.js",
+    "index.html": "/StreetArtFinder/street-art-app/index.html",
+    "main.893d154e.css.map": "/StreetArtFinder/street-art-app/static/css/main.893d154e.css.map",
+    "main.4b4a1857.js.map": "/StreetArtFinder/street-art-app/static/js/main.4b4a1857.js.map",
+    "453.bacf82f7.chunk.js.map": "/StreetArtFinder/street-art-app/static/js/453.bacf82f7.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.893d154e.css",
-    "static/js/main.0e03ad14.js"
+    "static/js/main.4b4a1857.js"
   ]
 }
