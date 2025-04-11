@@ -44,7 +44,7 @@ const LoginPage = () => {
         uid: user.uid
       });
 
-      navigate('/');
+      navigate('/userpage');
     }).catch((error) => {
       console.error("Error during Google login:", error);
     });
