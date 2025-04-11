@@ -8,7 +8,7 @@ import Arts from "./components/Arts";
 import ArtDetail from "./components/ArtDetail";
 function App() {
   return (
-    <Router>
+    <Router basename="/StreetArtFinder">
       <Routes>
         <Route path="/userpage" element={<UserPage />} />
         <Route path="/" element={<LoginPage />} />
