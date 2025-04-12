@@ -1,10 +1,10 @@
-import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
+import { FormControl, InputLabel, Input, Button, Box, Typography, AppBar, Toolbar } from '@mui/material';
 import React, { useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-
+import {Link} from '@mui/material';
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,14 +22,24 @@ const RegisterPage = () => {
         uid: user.uid
       });
       alert('Registration successful!');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       alert('Error registering: ' + error.message);
-      navigate('/login');
+      navigate('/');
     }
   };
 
   return (
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+         
+            <Typography variant="h5" component="div" sx={{ textAlign: 'center', flexGrow: 1 }}>
+              StreetArtFinder
+            </Typography>
+            </Toolbar>
+            
+        </AppBar>
     <Box 
       className='registerForm' 
       sx={{ 
@@ -41,7 +51,7 @@ const RegisterPage = () => {
         padding: 2 
       }}
     >
-      <Typography variant="h4" component="p" gutterBottom>
+      <Typography variant="h4" component="p" color='primary' gutterBottom>
         Register
       </Typography>
       <form onSubmit={handleRegister} style={{ width: '100%', maxWidth: 360 }}>
@@ -60,8 +70,11 @@ const RegisterPage = () => {
         <Button variant="contained" color="primary" type="submit" fullWidth>
           Register
         </Button>
+        <Typography color='primary' sx={{textAlign:'center',paddingTop:'15px'}}>Already have an account?</Typography>
+        <Link href='/StreetArtFinder' sx={{display: 'flex', paddingTop:'15px',justifyContent: 'center'}}>Click here to sign in!</Link>
       </form>
     </Box>
+    </div>
   );
 };
 

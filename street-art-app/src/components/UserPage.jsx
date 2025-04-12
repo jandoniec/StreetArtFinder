@@ -2,17 +2,12 @@ import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, CardContent, Typography, CardMedia } from '@mui/material';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { Button, Box,Card, CardContent, Typography, CardMedia } from '@mui/material';
+import { collection, getDocs, doc,deleteDoc, getDoc } from 'firebase/firestore';
 import { firestore, auth } from '../firebase';
-
-// FIX: domyślna ikona Leaflet
+import AppBarComponent from './AppBar';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -24,6 +19,7 @@ const UserPage = () => {
   const [user, setUser] = useState({ userName: '' });
   const [arts, setArts] = useState([]);
   const navigate = useNavigate();
+  const [userArts,setUserArts]=useState([])
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,7 +33,7 @@ const UserPage = () => {
       }
     };
 
-    const fetchArts = async () => {
+    const fetchAllArts = async () => {
       try {
         const snapshot = await getDocs(collection(firestore, 'arts'));
         const artsList = snapshot.docs.map(doc => ({
@@ -49,79 +45,130 @@ const UserPage = () => {
         console.error('Error fetching arts:', err);
       }
     };
+    const fetchUserArts = async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const userRef = doc(firestore, 'users', currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.data();
+        const userArts = userData?.arts || [];
+
+        const artsList = [];
+        for (let artId of userArts) {
+          const artDoc = await getDoc(doc(firestore, 'arts', artId));
+          if (artDoc.exists()) {
+            artsList.push({ id: artDoc.id, ...artDoc.data() });
+          }
+        }
+        setUserArts(artsList);
+      }
+    };
+
 
     fetchUserData();
-    fetchArts();
+    fetchAllArts();
+    fetchUserArts();
   }, []);
 
-  const handleLogout = () => {
-    navigate('/login');
-  };
+  // const handleLogout = () => {
+  //   navigate('/login');
+  // };
 
   const handleAdd = () => {
     navigate('/add-art');
   };
+  const handleSeeAll=()=>{
+    navigate('/arts')
+  }
+  const deleteArt = async (artId) => {
+    try {
+      const artRef = doc(firestore, "arts", artId);
+      await deleteDoc(artRef);
+      setUserArts((prevArts) => prevArts.filter((art) => art.id !== artId));
 
-  return (
-    <div>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              StreetArtFinder
-            </Typography>
-            <Button onClick={handleLogout} color="inherit">Logout</Button>
-          </Toolbar>
-        </AppBar>
-      </Box>
 
-      <div className="container bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen text-white">
-        <div className="max-w-4xl mx-auto p-6">
-          <h1 className="text-3xl font-semibold tracking-wide mb-4">Hello, {user.userName || 'Loading...'}</h1>
-          <h2 className="text-2xl font-semibold mb-6">Your Arts</h2>
+      alert('Document successfully deleted!');
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert('Error deleting document: ' + error.message);
+    }
+  };
+  // useEffect(()=>{
+  //   console.log(arts)
+  // },[arts])
+  
 
-          {arts.length === 0 ? (
-            <p className="text-center text-lg">You didn't add anything yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {arts.map((art) => (
-                <Card
-                  key={art.id}
-                  sx={{ width: 300, cursor: 'pointer' }}
-                  className="rounded-lg shadow-xl hover:shadow-2xl transition duration-300"
-                  onClick={() => navigate(`/art/${art.id}`)}
-                >
-                  {art.imageUrl && (
-                    <CardMedia
-                      component="img"
-                      height="180"
-                      image={art.imageUrl}
-                      alt={art.title}
-                    />
-                  )}
-                  <CardContent>
-                    <Typography variant="h6" className="text-center mb-2">{art.title}</Typography>
-                    <Typography variant="body2" className="text-gray-300 text-sm">
-                      Location: {art.location?.lat.toFixed(4)}, {art.location?.lng.toFixed(4)}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+return (
+  <div>
+    <AppBarComponent />
+    <div className="container bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen text-white">
+      <div className="max-w-6xl mx-auto p-6">
 
-          <div className="mt-8 flex justify-end space-x-4">
-            <Button variant="contained" color="primary" onClick={handleAdd}>
-              Add New
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleAdd}>
-              See map
-            </Button>
-          </div>
+        {userArts.length === 0 ? (
+          <p className="text-center text-lg">You didn't add anything yet.</p>
+        ) : (
+     
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
+            gap: 2,
+            justifyItems: 'center',
+            marginTop: 3,
+            '@media(min-width: 1024px)': {
+              gridTemplateColumns: 'repeat(auto-fill, minmax(900px, 1fr))',
+            },
+          }}>
+            <Typography variant='h3' color='primary' fontStyle='bold'>Your Arts</Typography>
+
+            {userArts.map((art) => (
+              <Card
+                key={art.id}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                  width: '100%',
+                  maxWidth: 700,
+                  '&:hover': { boxShadow: 8 },
+                  borderRadius: '8px',
+                  boxShadow: 3
+                }}
+                onClick={() => navigate(`/art/${art.id}`)}
+              >
+                {art.imageUrl && (
+                  <CardMedia
+                    component="img"
+                    height="400"
+                    image={art.imageUrl}
+                    alt={art.title}
+                    sx={{ objectFit: 'cover' }}
+                  />
+                )}
+                <CardContent sx={{ padding: '16px' }}>
+                  <Typography variant="h6" color="primary">{art.title}</Typography>
+                </CardContent>
+                <Button variant="contained" sx={{margin:'20px'}} size="large" color="primary" onClick={(e) => {e.stopPropagation();
+                deleteArt(art.id);}}>
+                Delete art
+          </Button>
+              </Card>
+            ))}
+          </Box>
+        )}
+
+        <div className="mt-8 flex justify-end space-x-4">
+          <Button variant="contained" sx={{margin:'20px'}} color="primary" size="large" onClick={handleAdd}>
+            Add New
+          </Button>
+          <Button variant="contained" sx={{margin:'20px'}} size="large" color="primary" onClick={handleSeeAll}>
+            See all arts
+          </Button>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
+
 
 export default UserPage;

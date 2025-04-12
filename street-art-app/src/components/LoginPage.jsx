@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Input, Button, Box, Typography } from '@mui/material';
+import { FormControl, InputLabel, Input, Button, Box, Typography, Toolbar, AppBar } from '@mui/material';
 import React, { useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -17,12 +17,11 @@ const LoginPage = () => {
       const user = userCredential.user;
       console.log(user)
   
-      // Fetch user data from Firestore
       const userDoc = await getDoc(doc(firestore, 'users', user.uid));
       if (userDoc.exists()) {
-        navigate('/');
+        navigate('/userpage');
       } else {
-        console.log('No such document!'); // Debugging line
+        console.log('No such document!'); 
       }
   
       alert('Login successful!');
@@ -39,15 +38,13 @@ const LoginPage = () => {
     signInWithPopup(auth, provider).then(async (result) => {
       const user = result.user;
 
-      // Store user data in Firestore
       await setDoc(doc(firestore, "users", user.uid), {
         name: user.displayName,
         email: user.email,
         uid: user.uid
-      });
+      }, { merge: true });
 
-      // Redirect to home page with user's name
-      navigate('/');
+      navigate('/userpage');
     }).catch((error) => {
       console.error("Error during Google login:", error);
     });
@@ -58,6 +55,14 @@ const LoginPage = () => {
   };
 
   return (
+    <div>
+      <AppBar position="static">
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <Typography variant="h5" component="div" sx={{ textAlign: 'center', flexGrow: 1 }}>
+            StreetArtFinder
+          </Typography>
+        </Toolbar>
+      </AppBar>
     <Box
       className='loginForm'
       sx={{
@@ -69,7 +74,7 @@ const LoginPage = () => {
         padding: 2
       }}
     >
-      <Typography variant="h4" component="p" gutterBottom>
+      <Typography variant="h4" component="p" color='primary' gutterBottom>
         Login
       </Typography>
       <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: 360, marginBottom: 16 }}>
@@ -81,15 +86,16 @@ const LoginPage = () => {
           <InputLabel htmlFor="password">Password</InputLabel>
           <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </FormControl>
-        <Button variant="contained" color="primary" type="submit" fullWidth>
+        <Button variant="contained" color="primary" type="submit" fullWidth >
           Login
         </Button>
       </form>
-      <Button variant="contained" color="info" onClick={handleGoogleLogin}>Login with Google</Button>
-      <Button variant="outlined" color="secondary" onClick={handleRegister} fullWidth sx={{ mt: 2 }}>
+      <Button variant="contained" sx={{width:'360px' ,marginBottom:"20px"}} color="primary" type="submit" onClick={handleGoogleLogin}>Login with Google</Button>
+      <Button variant="contained" sx={{width:'360px' ,marginBottom:"20px"}} color="primary" type="submit"  onClick={handleRegister} >
         Register
       </Button>
     </Box>
+    </div>
   );
 };
 
